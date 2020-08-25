@@ -91,11 +91,22 @@ You can put any valid JavaScript expression inside the curly braces in JSX.
 const name = 'Josh Perez';
 const element = <h1>Hello, {name}</h1>;
 
+But you cannot use statement inside JSX:
+<div>
+  // Will throw a Error
+  {if (showHeader) <Header />}
+  <Content />
+</div>
+
 Specifying Attributes with JSX
 You may use quotes to specify string literals as attributes:
 const element = <div tabIndex="0"></div>;
 You may also use curly braces to embed a JavaScript expression in an attribute:
 const element = <img src={user.avatarUrl}></img>;
+
+When you pass a string literal, its value is HTML-unescaped. So these two JSX expressions are equivalent:
+<MyComponent message="&lt;3" />
+<MyComponent message={'<3'} />
 
 Warning:
 Since JSX is closer to JavaScript than to HTML, React DOM uses camelCase property naming convention instead of HTML attribute names.
@@ -103,6 +114,27 @@ For example, class becomes className in JSX, and tabindex becomes tabIndex.
 
 JSX Prevents Injection Attacks
 By default, React DOM escapes any values embedded in JSX before rendering them. Thus it ensures that you can never inject anything that’s not explicitly written in your application. Everything is converted to a string before being rendered.
+
+Props Default to “True”
+If you pass no value for a prop, it defaults to true. These two JSX expressions are equivalent:
+<MyTextBox autocomplete />
+<MyTextBox autocomplete={true} />
+
+In general, we don’t recommend not passing a value for a prop, because it can be confused with the ES6 object shorthand {foo} which is short for {foo: foo} rather than {foo: true}. This behavior is just there so that it matches the behavior of HTML.
+
+Spread Attributes
+If you already have props as an object, and you want to pass it in JSX, you can use ... as a “spread” operator to pass the whole props object. These two components are equivalent:
+function App1() {
+  return <Greeting firstName="Ben" lastName="Hector" />;
+}
+
+function App2() {
+  const props = {firstName: 'Ben', lastName: 'Hector'};
+  return <Greeting {...props} />;
+}
+
+Children in JSX
+In JSX expressions that contain both an opening tag and a closing tag, the content between those tags is passed as a special prop: props.children. 
 
 JSX is an Expression Too
 After compilation, JSX expressions become regular JavaScript function calls and evaluate to JavaScript objects.
