@@ -12,6 +12,21 @@ Why JSX?
 React embraces the fact that rendering logic is inherently coupled with other UI logic: how events are handled, how the state changes over time, and how the data is prepared for display.
 Instead of artificially separating technologies by putting markup and logic in separate files, React separates concerns with loosely coupled units called “components” that contain both.
 
+Embedding Expressions in JSX
+You can put any valid JavaScript expression inside the curly braces in JSX.
+const name = 'Josh Perez';
+const element = <h1>Hello, {name}</h1>;
+
+Specifying Attributes with JSX
+You may use quotes to specify string literals as attributes:
+const element = <div tabIndex="0"></div>;
+You may also use curly braces to embed a JavaScript expression in an attribute:
+const element = <img src={user.avatarUrl}></img>;
+
+Warning:
+Since JSX is closer to JavaScript than to HTML, React DOM uses camelCase property naming convention instead of HTML attribute names.
+For example, class becomes className in JSX, and tabindex becomes tabIndex.
+
 JSX Prevents Injection Attacks
 By default, React DOM escapes any values embedded in JSX before rendering them. Thus it ensures that you can never inject anything that’s not explicitly written in your application. Everything is converted to a string before being rendered.
 
