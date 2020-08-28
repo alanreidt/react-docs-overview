@@ -75,6 +75,98 @@ function App2() {
 Children in JSX
 In JSX expressions that contain both an opening tag and a closing tag, the content between those tags is passed as a special prop: props.children. 
 
+There are several different ways to pass children:
+
+You can use a string as props.children:
+<MyComponent>Hello world!</MyComponent>
+
+JSX components:
+<MyContainer>
+  <MyFirstComponent />
+  <MySecondComponent />
+</MyContainer>
+
+Or mix of both:
+<div>
+  Here is a list:
+  <ul>
+    <li>Item 1</li>
+    <li>Item 2</li>
+  </ul>
+</div>
+
+A React component can also return an array of elements:
+render() {
+  // No need to wrap list items in an extra element!
+  return [
+    // Don't forget the keys :)
+    <li key="A">First item</li>,
+    <li key="B">Second item</li>,
+    <li key="C">Third item</li>,
+  ];
+}
+
+JavaScript Expressions as Children
+You can pass any JavaScript expression as children, by enclosing it within {}.
+This is often useful for rendering a list of JSX expressions of arbitrary length.
+
+For example, this renders an HTML list:
+function Item(props) {
+  return <li>{props.message}</li>;
+}
+
+function TodoList() {
+  const todos = ['finish doc', 'submit pr', 'nag dan to review'];
+  return (
+    <ul>
+      {todos.map((message) => <Item key={message} message={message} />)}
+    </ul>
+  );
+}
+
+Functions as Children
+Normally, JavaScript expressions inserted in JSX will evaluate to a string, a React element, or a list of those things. However, props.children works just like any other prop in that it can pass any sort of data, not just the sorts that React knows how to render. For example, if you have a custom component, you could have it take a callback as props.children:
+
+// Calls the children callback numTimes to produce a repeated component
+function Repeat(props) {
+  let items = [];
+  for (let i = 0; i < props.numTimes; i++) {
+    items.push(props.children(i));
+  }
+  return <div>{items}</div>;
+}
+
+function ListOfTenThings() {
+  return (
+    <Repeat numTimes={10}>
+      {(index) => <div key={index}>This is item {index} in the list</div>}
+    </Repeat>
+  );
+}
+Children passed to a custom component can be anything, as long as that component transforms them into something React can understand before rendering. This usage is not common, but it works if you want to stretch what JSX is capable of.
+
+Booleans, Null, and Undefined Are Ignored
+false, null, undefined, and true are valid children. They simply don’t render.
+This can be useful to conditionally render React elements:
+<div>
+  {showHeader && <Header />}
+  <Content />
+</div>
+
+One caveat is that some “falsy” values, such as the 0 number, are still rendered by React:
+<div>
+  {props.messages.length &&
+    <MessageList messages={props.messages} />
+  }
+</div>
+
+To fix this, make sure that the expression before && is always boolean:
+<div>
+  {props.messages.length > 0 &&
+    <MessageList messages={props.messages} />
+  }
+</div>
+
 JSX is an Expression Too
 After compilation, JSX expressions become regular JavaScript function calls and evaluate to JavaScript objects.
 
