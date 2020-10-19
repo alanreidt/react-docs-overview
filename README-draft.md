@@ -14,24 +14,48 @@ React embraces the fact that rendering logic is inherently coupled with other UI
 
 Instead of artificially separating technologies by putting markup and logic in separate files, React separates concerns with loosely coupled units called “components” that contain both.
 
-### Essence of JSX
+### The essence of JSX
 Fundamentally, JSX just provides syntactic sugar for the `React.createElement(component, props, ...children)` function.
 
-The JSX code:
+After compilation, JSX expressions become the function calls and evaluate to JavaScript objects.
+
+So, the JSX code:
 ```jsx
-<MyButton color="blue" shadowSize={2}>
-  Click Me
-</MyButton>
+const element = (
+  <h1 className="greeting">
+    Hello, world!
+  </h1>
+);
 ```
 
-Compiles into:
+Babel compiles to:
 ```jsx
-React.createElement(
-  MyButton,
-  {color: 'blue', shadowSize: 2},
-  'Click Me'
-)
+const element = React.createElement(
+  'h1',
+  {className: 'greeting'},
+  'Hello, world!'
+);
 ```
+
+`React.createElement()` performs a few checks to help you write bug-free code, but essentially it creates an object like this:
+```jsx
+// Note: this structure is simplified
+const element = {
+  type: 'h1',
+  props: {
+    className: 'greeting',
+    children: 'Hello, world!'
+  }
+};
+```
+
+These objects are called “React elements”. You can think of them as descriptions of what you want to see on the screen. React reads these objects and uses them to construct the DOM and keep it up to date.
+
+> **Warning:**
+>
+> Since JSX is closer to JavaScript than to HTML, React DOM uses `camelCase` property naming convention instead of HTML attribute names.
+>
+> For example, `class` becomes `className` in JSX, and `tabindex` becomes `tabIndex`.
 
 ### Embedding Expressions in JSX
 You can put any valid JavaScript expression inside the curly braces in JSX.
@@ -65,12 +89,6 @@ When you pass a string literal, its value is HTML-unescaped. So these two JSX ex
 <MyComponent message="&lt;3" />
 <MyComponent message={'<3'} />
 ```
-
-> **Warning:**
->
-> Since JSX is closer to JavaScript than to HTML, React DOM uses `camelCase` property naming convention instead of HTML attribute names.
->
-> For example, `class` becomes `className` in JSX, and `tabindex` becomes `tabIndex`.
 
 ### JSX Prevents Injection Attacks
 By default, React DOM escapes any values embedded in JSX before rendering them. Thus it ensures that you can never inject anything that’s not explicitly written in your application. Everything is converted to a string before being rendered.
@@ -216,38 +234,3 @@ To fix this, make sure that the expression before `&&` is always boolean:
   }
 </div>
 ```
-
-### JSX is an Expression Too
-After compilation, JSX expressions become regular JavaScript function calls and evaluate to JavaScript objects.
-
-### JSX Represents Objects
-Babel compiles JSX down to `React.createElement()` calls.
-
-These two examples are identical:
-```jsx
-const element = (
-  <h1 className="greeting">
-    Hello, world!
-  </h1>
-);
-
-const element = React.createElement(
-  'h1',
-  {className: 'greeting'},
-  'Hello, world!'
-);
-```
-
-`React.createElement()` performs a few checks to help you write bug-free code, but essentially it creates an object like this:
-```jsx
-// Note: this structure is simplified
-const element = {
-  type: 'h1',
-  props: {
-    className: 'greeting',
-    children: 'Hello, world!'
-  }
-};
-```
-
-These objects are called “React elements”. You can think of them as descriptions of what you want to see on the screen. React reads these objects and uses them to construct the DOM and keep it up to date.
